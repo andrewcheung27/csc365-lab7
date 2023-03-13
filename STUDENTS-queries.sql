@@ -61,13 +61,8 @@ WITH numstudents AS  -- numstudents: number of students per classroom
     (SELECT classroom, grade, COUNT(*) AS NumStudents
     FROM teachers JOIN list USING(classroom)
     GROUP BY classroom, grade),
-
 maxstudents AS  -- maxstudents: largest class per grade
-    (WITH numstudents AS
-        (SELECT classroom, grade, COUNT(*) AS NumStudents
-        FROM teachers JOIN list USING(classroom)
-        GROUP BY classroom, grade)
-    SELECT grade, MAX(NumStudents) AS MaxStudents
+    (SELECT grade, MAX(NumStudents) AS MaxStudents
     FROM numstudents
     GROUP BY grade)
 
