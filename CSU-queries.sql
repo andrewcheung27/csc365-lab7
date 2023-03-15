@@ -33,7 +33,7 @@ USE `CSU`;
 -- Q3
 WITH ratio AS
     (SELECT c.Id, c.Campus, e.Year, e.FTE / f.FTE AS sfRatio
-    FROM enrollments AS e JOIN campuses AS c ON e.CampusId = c.Id
+    FROM (enrollments AS e JOIN campuses AS c ON e.CampusId = c.Id)
         JOIN faculty AS f ON f.CampusId = e.CampusId AND f.Year = e.Year
     GROUP BY c.Id, e.Year)
 SELECT Campus, Year, sfRatio
@@ -45,12 +45,10 @@ ORDER BY sfRatio;
 USE `CSU`;
 -- Q4
 WITH numcampuses AS
-    -- minratios: the minimum s/f ratio per campus
     (WITH minratios AS
-        -- ratio: the s/f ratio per campus per year
         (WITH ratio AS
             (SELECT c.Id, c.Campus, e.Year, e.FTE / f.FTE AS sfRatio
-            FROM campuses AS c JOIN enrollments AS e ON c.Id = e.CampusId
+            FROM (campuses AS c JOIN enrollments AS e ON c.Id = e.CampusId)
                 JOIN faculty AS f ON f.CampusId = e.CampusId AND f.Year = e.Year
             GROUP BY c.Id, e.Year)
         SELECT *
@@ -73,14 +71,12 @@ WITH fte AS
     FROM campuses AS c JOIN faculty AS f ON c.Id = f.CampusId
     WHERE f.Year >= 2002
         AND f.Year <= 2004),
-
 badcampuses AS
     (SELECT c.Id
-    FROM disciplines AS d JOIN discEnr ON d.Id = discEnr.Discipline
+    FROM (disciplines AS d JOIN discEnr ON d.Id = discEnr.Discipline)
         JOIN campuses AS c ON c.Id = discEnr.CampusId
     WHERE discEnr.Year = 2004
         AND d.Name = 'Engineering')
-
 SELECT Campus, AVG(FTE) AS avgFTE
 FROM fte AS f
 WHERE Id NOT IN(SELECT Id FROM badcampuses)

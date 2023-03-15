@@ -57,19 +57,18 @@ ORDER BY c1.NumStudents;
 
 USE `STUDENTS`;
 -- Q5
-WITH numstudents AS  -- numstudents: number of students per classroom
+WITH numstudents AS
     (SELECT classroom, grade, COUNT(*) AS NumStudents
     FROM teachers JOIN list USING(classroom)
     GROUP BY classroom, grade),
-maxstudents AS  -- maxstudents: largest class per grade
+maxstudents AS
     (SELECT grade, MAX(NumStudents) AS MaxStudents
     FROM numstudents
-    GROUP BY grade)
-
+    GROUP BY grade);
 SELECT grade, teachers.Last AS teacher
 FROM numstudents JOIN maxstudents USING(grade) JOIN teachers USING(classroom)
 WHERE NumStudents = MaxStudents
-    -- grade has more than one classroom
+    -- AND grade has more than one classroom
     AND grade IN((SELECT grade
                     FROM teachers JOIN list USING(classroom)
                     GROUP BY grade

@@ -7,13 +7,13 @@ USE `WINE`;
 -- Q1
 WITH numwines AS
     (SELECT Grape, COUNT(*) AS NumWines
-    FROM wine JOIN grapes USING(Grape)
+    FROM (wine JOIN grapes USING(Grape))
         JOIN appellations USING(Appellation)
     WHERE Color = 'Red'
         AND County = 'San Luis Obispo'
     GROUP BY Grape)
-SELECT Grape, COUNT(*) AS NumWines
-FROM wine JOIN grapes USING(Grape)
+SELECT Grape
+FROM (wine JOIN grapes USING(Grape))
     JOIN appellations USING(Appellation)
 WHERE Color = 'Red'
     AND County = 'San Luis Obispo'
@@ -69,7 +69,6 @@ WITH dcv AS
         AND Vintage >= 2005
         AND Vintage <= 2009
     GROUP BY Appellation, Vintage),
-
 carn AS
     (SELECT Appellation, Vintage, MAX(Score) AS maxscore
     FROM wine
@@ -77,12 +76,10 @@ carn AS
         AND Vintage >= 2005
         AND Vintage <= 2009
     GROUP BY Appellation, Vintage)
-
 SELECT DISTINCT
     (SELECT COUNT(*)
     FROM dcv JOIN carn USING(Vintage)
     WHERE dcv.maxscore > carn.maxscore) AS DCV,
-
     (SELECT COUNT(*)
     FROM carn JOIN dcv USING(Vintage)
         WHERE carn.maxscore > dcv.maxscore) AS Carneros;

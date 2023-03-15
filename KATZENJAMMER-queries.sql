@@ -76,16 +76,16 @@ USE `KATZENJAMMER`;
 -- Q7
 WITH lead_singers AS
 (SELECT t.Position, s.Title, b.Firstname
-FROM Tracklists AS t JOIN Songs AS s ON t.Song = s.SongId
-    JOIN Albums AS a ON t.Album = a.AId
-    JOIN Vocals AS v USING(Song)
+FROM (((Tracklists AS t JOIN Songs AS s ON t.Song = s.SongId)
+    JOIN Albums AS a ON t.Album = a.AId)
+    JOIN Vocals AS v USING(Song))
     JOIN Band AS b ON v.Bandmate = b.Id
 WHERE a.Title = 'Le Pop'
     AND v.VocalType = 'lead')
 
 SELECT s.Title, lead_singers.Firstname
-FROM Tracklists AS t JOIN Songs AS s ON t.Song = s.SongId
-    JOIN Albums AS a ON t.Album = a.AId
+FROM ((Tracklists AS t JOIN Songs AS s ON t.Song = s.SongId)
+    JOIN Albums AS a ON t.Album = a.AId)
     LEFT OUTER JOIN lead_singers ON s.Title = lead_singers.Title
 WHERE a.Title = 'Le Pop'
 ORDER BY t.Position, lead_singers.Firstname;

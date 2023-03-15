@@ -26,8 +26,8 @@ USE `CARS`;
 WITH makers AS
     (SELECT countries.Id AS CountryId, countries.Name AS CountryName,
         carmakers.Maker, COUNT(*) AS NumMakes
-    FROM makes JOIN models USING(Model)
-        JOIN carmakers ON models.Maker = carmakers.Id
+    FROM ((makes JOIN models USING(Model))
+        JOIN carmakers ON models.Maker = carmakers.Id)
         JOIN countries ON carmakers.Country = countries.Id
     GROUP BY countries.Id, carmakers.Id)
 SELECT CountryName AS Country, Maker
@@ -42,8 +42,8 @@ WITH avgWeights AS
     (SELECT carmakers.Id AS MakerId, carmakers.Maker, Year,
         AVG(Weight) AS AvgWeight, COUNT(*) AS NumVehicles,
         AVG(Accelerate) AS AvgAcc
-    FROM makes JOIN cardata USING(Id)
-        JOIN models USING(Model)
+    FROM ((makes JOIN cardata USING(Id))
+        JOIN models USING(Model))
         JOIN carmakers ON models.Maker = carmakers.Id
     GROUP BY MakerId, Year)
 SELECT Year, Maker, NumVehicles, AvgAcc
@@ -71,18 +71,18 @@ USE `CARS`;
 -- Q6
 WITH usa AS
     (SELECT Year, COUNT(*) AS USCars
-    FROM makes JOIN cardata USING(Id)
-        JOIN models USING(Model)
-        JOIN carmakers ON models.Maker = carmakers.Id
+    FROM (((makes JOIN cardata USING(Id))
+        JOIN models USING(Model))
+        JOIN carmakers ON models.Maker = carmakers.Id)
         JOIN countries ON carmakers.Country = countries.Id
     WHERE countries.Name = 'usa'
         AND Year >= 1972 AND Year <= 1976
     GROUP BY Year),
 non_usa AS
     (SELECT Year, COUNT(*) AS nonUSCars
-    FROM makes JOIN cardata USING(Id)
-        JOIN models USING(Model)
-        JOIN carmakers ON models.Maker = carmakers.Id
+    FROM (((makes JOIN cardata USING(Id))
+        JOIN models USING(Model))
+        JOIN carmakers ON models.Maker = carmakers.Id)
         JOIN countries ON carmakers.Country = countries.Id
     WHERE countries.Name != 'usa'
         AND Year >= 1972 AND Year <= 1976

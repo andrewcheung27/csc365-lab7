@@ -37,7 +37,7 @@ WITH maxprice AS
     FROM reservations JOIN rooms ON reservations.Room = rooms.RoomCode
     GROUP BY RoomCode)
 SELECT RoomName, CheckIn, CheckOut, LastName, Rate, MaxTotalPrice
-FROM maxprice JOIN rooms USING(RoomCode)
+FROM (maxprice JOIN rooms USING(RoomCode))
     JOIN reservations ON reservations.Room = rooms.RoomCode
 WHERE DATEDIFF(CheckOut, CheckIn) * Rate = MaxTotalPrice
 ORDER BY MaxTotalPrice DESC;
