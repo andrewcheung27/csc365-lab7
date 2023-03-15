@@ -37,8 +37,13 @@ HAVING COUNT(*) = (SELECT MAX(NumWines) FROM numwines);
 
 
 USE `WINE`;
--- TODO: Q3
--- ?????????
+-- Q3
+WITH numcases AS
+    (SELECT ROW_NUMBER() OVER(ORDER BY Cases DESC) AS CaseRank, Cases
+    FROM wine)
+SELECT Winery, Name, Cases
+FROM wine
+WHERE wine.Cases = (SELECT Cases FROM numcases WHERE CaseRank = 37);
 
 
 USE `WINE`;
